@@ -29,6 +29,9 @@ class Game {
         // Enemy manager
         this.enemyManager = null;
         
+        // Power-up manager
+        this.powerUpManager = null;
+        
         // Collision manager
         this.collisionManager = null;
         
@@ -71,6 +74,9 @@ class Game {
         
         // Create enemy manager
         this.enemyManager = new EnemyManager(this.width, this.height, this);
+        
+        // Create power-up manager
+        this.powerUpManager = new PowerUpManager(this);
         
         // Create collision manager
         this.collisionManager = new CollisionManager(this);
@@ -118,6 +124,11 @@ class Game {
         // Update enemy manager to spawn new enemies
         if (this.enemyManager) {
             this.enemyManager.update(dt);
+        }
+        
+        // Update power-up manager to spawn new power-ups
+        if (this.powerUpManager) {
+            this.powerUpManager.update(dt);
         }
         
         // Update player with input and canvas bounds
@@ -262,6 +273,7 @@ class Game {
         
         // Reinitialize game and managers
         this.enemyManager = null;
+        this.powerUpManager = null;
         this.collisionManager = null;
         this.initializeGame();
     }

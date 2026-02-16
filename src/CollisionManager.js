@@ -19,6 +19,9 @@ class CollisionManager {
         
         // Enemies vs player
         this.checkEnemiesVsPlayer();
+        
+        // Player vs power-ups
+        this.checkPowerUpCollection();
     }
     
     /**
@@ -65,7 +68,10 @@ class CollisionManager {
     }
     
     /**
-     * Check collision between enemies and player
+     * Check if a point intersects with enemy
+     * @param {number} px - Point X
+     * @param {number} py - Point Y
+     * @returns {boolean}
      */
     checkEnemiesVsPlayer() {
         if (!this.game.player || this.game.player.isDead) return;
@@ -77,6 +83,23 @@ class CollisionManager {
                 // Enemy touches player
                 this.game.player.takeDamage(20); // Large damage from collision
                 enemy.isDead = true;
+            }
+        }
+    }
+    
+    /**
+     * Check player vs power-ups
+     */
+    checkPowerUpCollection() {
+        if (!this.game.player || this.game.player.isDead) return;
+        
+        for (let entity of this.game.entities) {
+            if (entity.type !== 'powerup' || entity.isDead) continue;
+            
+            if (this.checkAABBCollision(entity.getBounds(), this.game.player.getBounds())) {
+                // Power-up collected
+                entity.applyEffect(this.game.player);
+                entity.isDead = true;
             }
         }
     }

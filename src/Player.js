@@ -19,6 +19,16 @@ class Player extends Entity {
         
         // Collision
         this.collidingWith = [];
+        
+        // Power-up effects
+        this.hasSpreadShot = false;
+        this.spreadShotTimer = 0;
+        this.hasRapidFire = false;
+        this.rapidFireTimer = 0;
+        this.hasShield = false;
+        this.shieldTimer = 0;
+        this.hasPiercingRounds = false;
+        this.piercingRoundsTimer = 0;
     }
     
     /**
@@ -56,6 +66,35 @@ class Player extends Entity {
         if (this.y < 0) this.y = 0;
         if (this.y + this.height > canvasHeight) this.y = canvasHeight - this.height;
         
+        // Update power-up timers
+        if (this.hasSpreadShot) {
+            this.spreadShotTimer -= dt;
+            if (this.spreadShotTimer <= 0) {
+                this.hasSpreadShot = false;
+            }
+        }
+        
+        if (this.hasRapidFire) {
+            this.rapidFireTimer -= dt;
+            if (this.rapidFireTimer <= 0) {
+                this.hasRapidFire = false;
+            }
+        }
+        
+        if (this.hasShield) {
+            this.shieldTimer -= dt;
+            if (this.shieldTimer <= 0) {
+                this.hasShield = false;
+            }
+        }
+        
+        if (this.hasPiercingRounds) {
+            this.piercingRoundsTimer -= dt;
+            if (this.piercingRoundsTimer <= 0) {
+                this.hasPiercingRounds = false;
+            }
+        }
+        
         // Update shooting cooldown
         if (this.shootCooldown > 0) {
             this.shootCooldown -= dt;
@@ -64,7 +103,7 @@ class Player extends Entity {
         // Auto-fire (always shooting)
         if (this.shootCooldown <= 0) {
             this.shoot();
-            this.shootCooldown = this.shootRate;
+            this.shootCooldown = this.hasRapidFire ? 0.05 : this.shootRate; // Rapid fire doubles rate
         }
     }
     
@@ -72,11 +111,29 @@ class Player extends Entity {
      * Create a bullet at player position
      */
     shoot() {
-        // Bullet starts at the center-top of the player
-        const bulletX = this.x + this.width / 2 - 2; // 4px wide bullet
-        const bulletY = this.y - 5; // Slightly above player
-        const bullet = new Bullet(bulletX, bulletY);
-        this.bullets.push(bullet);
+        if (this.hasSpreadShot) {
+            // Spread shot fires 3 bullets at different angles
+            const centerX = this.x + this.width / 2 - 2;
+            const centerY = this.y - 5;
+            
+            // Center bullet
+            const bullet1 = new Bullet(centerX, centerY);
+            this.bullets.push(bullet1);
+            
+            // Left bullet (at 30 degree angle)
+            const bullet2 = new SpreadBullet(centerX - 8, centerY, -100);
+            this.bullets.push(bullet2);
+            
+            // Right bullet (at 30 degree angle)
+            const bullet3 = new SpreadBullet(centerX + 8, centerY, 100);
+            this.bullets.push(bullet3);
+        } else {
+            // Normal single bullet
+            const bulletX = this.x + this.width / 2 - 2; // 4px wide bullet
+            const bulletY = this.y - 5; // Slightly above player
+            const bullet = new Bullet(bulletX, bulletY);
+            this.bullets.push(bullet);
+        }
     }
     
     /**
@@ -141,6 +198,15 @@ class Player extends Entity {
         ctx.closePath();
         ctx.fill();
         
+        // Draw shield if active
+        if (this.hasShield) {
+            ctx.strokeStyle = '#0088FF';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(this.x + this.width / 2, this.y + this.height / 2, 25, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+        
         // Draw health indicator
         if (this.health < this.maxHealth) {
             ctx.strokeStyle = '#FF0000';
@@ -151,5 +217,41 @@ class Player extends Entity {
         }
         
         ctx.restore();
+    }
+    
+    /**
+     * Apply Spread Shot power-up
+     * @param {number} duration - Duration in seconds
+     */
+    applySpreadShot(duration) {
+        this.hasSpreadShot = true;
+        this.spreadShotTimer = duration;
+    }
+    
+    /**
+     * Apply Rapid Fire power-up
+     * @param {number} duration - Duration in seconds
+     */
+    applyRapidFire(duration) {
+        this.hasRapidFire = true;
+        this.rapidFireTimer = duration;
+    }
+    
+    /**
+     * Apply Shield power-up
+     * @param {number} duration - Duration in seconds
+     */
+    applyShield(duration) {
+        this.hasShield = true;
+        this.shieldTimer = duration;
+    }
+    
+    /**
+     * Apply Piercing Rounds power-up
+     * @param {number} duration - Duration in seconds
+     */
+    applyPiercingRounds(duration) {
+        this.hasPiercingRounds = true;
+        this.piercingRoundsTimer = duration;
     }
 }
