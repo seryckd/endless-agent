@@ -29,6 +29,9 @@ class Game {
         // Enemy manager
         this.enemyManager = null;
         
+        // Collision manager
+        this.collisionManager = null;
+        
         // Game state
         this.score = 0;
         this.gameOver = false;
@@ -68,6 +71,9 @@ class Game {
         
         // Create enemy manager
         this.enemyManager = new EnemyManager(this.width, this.height, this);
+        
+        // Create collision manager
+        this.collisionManager = new CollisionManager(this);
     }
     
     start() {
@@ -155,6 +161,11 @@ class Game {
         
         // Remove off-screen enemy bullets
         this.entities = this.entities.filter(e => !(e.type === 'enemyBullet' && e.isOffScreen(this.height)));
+        
+        // Check collisions
+        if (this.collisionManager) {
+            this.collisionManager.checkCollisions();
+        }
         
         // Check if player is dead
         if (this.player && this.player.isDead) {
@@ -249,8 +260,9 @@ class Game {
             gameOverOverlay.classList.add('hidden');
         }
         
-        // Reinitialize game and enemy manager
+        // Reinitialize game and managers
         this.enemyManager = null;
+        this.collisionManager = null;
         this.initializeGame();
     }
     
