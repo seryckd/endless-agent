@@ -1,0 +1,112 @@
+/* ============================================================================
+   Endless Auto-Shooter - Styles
+   ============================================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #0a0a0a;
+    font-family: Arial, sans-serif;
+    color: #fff;
+}
+
+.game-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+canvas#gameCanvas {
+    display: block;
+    background-color: #0f3460;
+    border: 2px solid #e94560;
+    box-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+}
+
+.hud {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: bold;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.hud-element {
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #e94560;
+    border-radius: 4px;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.overlay.hidden {
+    display: none;
+}
+
+.modal {
+    text-align: center;
+    background: #1a1a2e;
+    border: 2px solid #e94560;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 0 30px rgba(233, 69, 96, 0.7);
+}
+
+.modal h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #e94560;
+}
+
+.modal p {
+    font-size: 24px;
+    margin-bottom: 30px;
+    color: #aaa;
+}
+
+.modal button {
+    padding: 12px 30px;
+    font-size: 18px;
+    background-color: #e94560;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal button:hover {
+    background-color: #d63347;
+}
+
+.modal button:active {
+    transform: scale(0.98);
+}

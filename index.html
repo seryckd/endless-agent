@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endless Auto-Shooter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="gameContainer" class="game-container">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="hud" class="hud">
+            <div id="score" class="hud-element">Score: 0</div>
+            <div id="health" class="hud-element">Health: 100</div>
+            <div id="fps" class="hud-element">FPS: 60</div>
+        </div>
+        <div id="gameOver" class="overlay hidden">
+            <div class="modal">
+                <h1>Game Over</h1>
+                <p id="finalScore">Final Score: 0</p>
+                <button id="restartBtn">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/Entity.js"></script>
+    <script src="src/InputHandler.js"></script>
+    <script src="src/main.js"></script>
+</body>
+</html>
