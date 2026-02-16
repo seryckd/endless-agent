@@ -1,0 +1,16 @@
+{
+  "sprites": {
+    "player": "assets/sprites/player.png",
+    "enemy_grunt": "assets/sprites/enemy_grunt.png",
+    "bullet": "assets/sprites/bullet.png",
+    "power_spread": "assets/sprites/power_spread.png"
+  },
+  "sfx": {
+    "shoot": "assets/sfx/shoot.ogg",
+    "hit": "assets/sfx/hit.ogg",
+    "pickup": "assets/sfx/pickup.ogg"
+  },
+  "fonts": {
+    "kenvector_future": "assets/fonts/kenvector_future.ttf"
+  }
+}
