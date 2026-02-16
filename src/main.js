@@ -26,6 +26,9 @@ class Game {
         this.powerUps = [];
         this.particles = [];
         
+        // Enemy manager
+        this.enemyManager = null;
+        
         // Game state
         this.score = 0;
         this.gameOver = false;
@@ -62,6 +65,9 @@ class Game {
         const playerY = this.height - 60;
         const player = new Player(playerX, playerY);
         this.addEntity(player);
+        
+        // Create enemy manager
+        this.enemyManager = new EnemyManager(this.width, this.height, this);
     }
     
     start() {
@@ -103,6 +109,11 @@ class Game {
         // Clear per-frame input state
         this.input.clearFrameInput();
         
+        // Update enemy manager to spawn new enemies
+        if (this.enemyManager) {
+            this.enemyManager.update(dt);
+        }
+        
         // Update player with input and canvas bounds
         if (this.player && !this.player.isDead) {
             this.player.update(dt, this.input, this.width, this.height);
@@ -114,10 +125,23 @@ class Game {
             this.player.bullets = [];
         }
         
+        // Update all enemies
+        for (let enemy of this.enemies) {
+            if (!enemy.isDead) {
+                enemy.update(dt, this.width, this.height);
+                
+                // Add enemy bullets to game
+                for (let bullet of enemy.bullets) {
+                    this.addEntity(bullet);
+                }
+                enemy.bullets = [];
+            }
+        }
+        
         // Update all other entities
         for (let entity of this.entities) {
-            if (entity !== this.player && entity.update) {
-                if (entity.type === 'bullet') {
+            if (entity !== this.player && entity.type !== 'enemy' && entity.update) {
+                if (entity.type === 'bullet' || entity.type === 'enemyBullet') {
                     entity.update(dt);
                 } else {
                     entity.update(dt);
@@ -129,6 +153,9 @@ class Game {
         this.bullets = this.bullets.filter(b => !b.isOffScreen(this.height));
         this.entities = this.entities.filter(e => !(e.type === 'bullet' && e.isOffScreen(this.height)));
         
+        // Remove off-screen enemy bullets
+        this.entities = this.entities.filter(e => !(e.type === 'enemyBullet' && e.isOffScreen(this.height)));
+        
         // Check if player is dead
         if (this.player && this.player.isDead) {
             this.gameOverState();
@@ -136,6 +163,7 @@ class Game {
         
         // Remove dead entities
         this.entities = this.entities.filter(e => !e.isDead);
+        this.enemies = this.enemies.filter(e => !e.isDead);
     }
     
     render() {
@@ -221,7 +249,8 @@ class Game {
             gameOverOverlay.classList.add('hidden');
         }
         
-        // Reinitialize game
+        // Reinitialize game and enemy manager
+        this.enemyManager = null;
         this.initializeGame();
     }
     
