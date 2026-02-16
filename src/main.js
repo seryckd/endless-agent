@@ -35,6 +35,9 @@ class Game {
         // Collision manager
         this.collisionManager = null;
         
+        // Scoring system
+        this.scoringSystem = null;
+        
         // Game state
         this.score = 0;
         this.gameOver = false;
@@ -71,6 +74,9 @@ class Game {
         const playerY = this.height - 60;
         const player = new Player(playerX, playerY);
         this.addEntity(player);
+        
+        // Create scoring system
+        this.scoringSystem = new ScoringSystem(this);
         
         // Create enemy manager
         this.enemyManager = new EnemyManager(this.width, this.height, this);
@@ -120,6 +126,11 @@ class Game {
         
         // Clear per-frame input state
         this.input.clearFrameInput();
+        
+        // Update scoring system
+        if (this.scoringSystem) {
+            this.scoringSystem.update(dt);
+        }
         
         // Update enemy manager to spawn new enemies
         if (this.enemyManager) {
@@ -206,11 +217,16 @@ class Game {
     
     updateHUD() {
         const scoreElement = document.getElementById('score');
+        const multiplierElement = document.getElementById('multiplier');
         const healthElement = document.getElementById('health');
         const fpsElement = document.getElementById('fps');
         
-        if (scoreElement) {
-            scoreElement.textContent = `Score: ${this.score}`;
+        if (scoreElement && this.scoringSystem) {
+            scoreElement.textContent = `Score: ${this.scoringSystem.getScore()}`;
+        }
+        
+        if (multiplierElement && this.scoringSystem) {
+            multiplierElement.textContent = `Multiplier: ${this.scoringSystem.getMultiplier()}x`;
         }
         
         if (healthElement && this.player) {
@@ -248,7 +264,8 @@ class Game {
         const finalScoreElement = document.getElementById('finalScore');
         
         if (gameOverOverlay && finalScoreElement) {
-            finalScoreElement.textContent = `Final Score: ${this.score}`;
+            const finalScore = this.scoringSystem ? this.scoringSystem.getScore() : this.score;
+            finalScoreElement.textContent = `Final Score: ${finalScore}`;
             gameOverOverlay.classList.remove('hidden');
         }
     }
@@ -272,6 +289,7 @@ class Game {
         }
         
         // Reinitialize game and managers
+        this.scoringSystem = null;
         this.enemyManager = null;
         this.powerUpManager = null;
         this.collisionManager = null;

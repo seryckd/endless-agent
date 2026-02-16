@@ -39,9 +39,9 @@ class CollisionManager {
                     enemy.takeDamage(bullet.damage);
                     bullet.isDead = true;
                     
-                    // Add score for hit (full kill gives points in enemy.takeDamage)
-                    if (enemy.isDead) {
-                        this.game.score += enemy.scoreValue;
+                    // Add score for hit
+                    if (enemy.isDead && this.game.scoringSystem) {
+                        this.game.scoringSystem.addKillScore(enemy.scoreValue);
                     }
                     
                     break; // Bullet can only hit one enemy per frame
