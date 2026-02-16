@@ -11,6 +11,6 @@ Run `bd prime` for workflow context.
 
 ### Task Execution Strategy
 - **⚠️ IMPORTANT:** When starting work on a task from the tracker, first evaluate its scope.
-- **If the task is large:** Break it down into smaller, concrete subtasks and **add all subtasks to the tracker BEFORE beginning any implementation work** then stop and sync with `bd sync`.
+- **If the task is large:** Break it down into smaller, concrete subtasks and **add all subtasks to the tracker BEFORE beginning any implementation work** then sync with `bd sync` and **STOP** to watch for the next instruction.
 - **Goal:** Maintain visibility into work progress and avoid context-switching surprises.
 - **Example:** "Implement audio system" → Subtasks: "Setup Web Audio API wrapper", "Create SFX loader", "Implement mute toggle", "Add background music loop".

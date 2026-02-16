@@ -36,6 +36,9 @@ class Game {
         // UI
         this.setupUI();
         
+        // Initialize game entities
+        this.initializeGame();
+        
         // Start the game loop
         this.start();
     }
@@ -51,6 +54,14 @@ class Game {
         if (restartBtn) {
             restartBtn.addEventListener('click', () => this.restart());
         }
+    }
+    
+    initializeGame() {
+        // Create player at center-bottom of screen
+        const playerX = this.width / 2 - 15; // Center (player is 30px wide)
+        const playerY = this.height - 60;
+        const player = new Player(playerX, playerY);
+        this.addEntity(player);
     }
     
     start() {
@@ -92,11 +103,35 @@ class Game {
         // Clear per-frame input state
         this.input.clearFrameInput();
         
-        // Update all entities
-        for (let entity of this.entities) {
-            if (entity.update) {
-                entity.update(dt);
+        // Update player with input and canvas bounds
+        if (this.player && !this.player.isDead) {
+            this.player.update(dt, this.input, this.width, this.height);
+            
+            // Add player bullets to bullets list
+            for (let bullet of this.player.bullets) {
+                this.addEntity(bullet);
             }
+            this.player.bullets = [];
+        }
+        
+        // Update all other entities
+        for (let entity of this.entities) {
+            if (entity !== this.player && entity.update) {
+                if (entity.type === 'bullet') {
+                    entity.update(dt);
+                } else {
+                    entity.update(dt);
+                }
+            }
+        }
+        
+        // Remove off-screen bullets
+        this.bullets = this.bullets.filter(b => !b.isOffScreen(this.height));
+        this.entities = this.entities.filter(e => !(e.type === 'bullet' && e.isOffScreen(this.height)));
+        
+        // Check if player is dead
+        if (this.player && this.player.isDead) {
+            this.gameOverState();
         }
         
         // Remove dead entities
@@ -121,10 +156,15 @@ class Game {
     
     updateHUD() {
         const scoreElement = document.getElementById('score');
+        const healthElement = document.getElementById('health');
         const fpsElement = document.getElementById('fps');
         
         if (scoreElement) {
             scoreElement.textContent = `Score: ${this.score}`;
+        }
+        
+        if (healthElement && this.player) {
+            healthElement.textContent = `Health: ${Math.ceil(this.player.health)}`;
         }
         
         if (fpsElement) {
@@ -180,6 +220,9 @@ class Game {
         if (gameOverOverlay) {
             gameOverOverlay.classList.add('hidden');
         }
+        
+        // Reinitialize game
+        this.initializeGame();
     }
     
     stop() {

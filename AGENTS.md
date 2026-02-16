@@ -1,3 +1,7 @@
+# Design Document
+
+Read the design specs in the /spec folder.
+
 # Tool & Technology Choices
 
 ## Project Overview
